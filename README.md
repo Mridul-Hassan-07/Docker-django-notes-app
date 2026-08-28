@@ -2,7 +2,7 @@
 This is a simple notes app built with React and Django.
 
 # Cloned from github to practice Docker
-This project was cloned from github and Dockerfile and docker-compose(compose.yaml) is written from scratch to practice docker.
+This project was cloned from github, Dockerfile and docker-compose(compose.yaml) is written from scratch to practice docker.
 
 ## Requirements
 1. Python 3.9
