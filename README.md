@@ -10,7 +10,7 @@ This project was cloned from github, Dockerfile and docker-compose(compose.yaml)
 3. React
 
 ## Installation
-1. Original Clone the repository
+1. Original repository
 ```
 git clone https://github.com/LondheShubham153/django-notes-app.git
 ```
@@ -22,7 +22,7 @@ docker build -t notes-app .
 
 3. Run the app
 ```
-docker run -d -p 8000:8000 notes-app:latest
+docker compose up 
 ```
 
 ## Nginx
