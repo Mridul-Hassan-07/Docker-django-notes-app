@@ -10,7 +10,7 @@ This project was cloned from github, Dockerfile and docker-compose(compose.yaml)
 3. React
 
 ## Installation
-1. Clone the repository
+1. Original Clone the repository
 ```
 git clone https://github.com/LondheShubham153/django-notes-app.git
 ```
