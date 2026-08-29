@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -25,4 +25,22 @@ jobs:
       - name: Stop application
         if: always()
         run: docker compose down -v
+  cd:
+    needs: ci
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
+    - name: Login to Docker Hub
+      run: |
+        echo "${{ secrets.DOCKERHUB_PASSWORD }}" | \
+        docker login \
+        -u "${{ secrets.DOCKERHUB_USERNAME }}" \
+        --password-stdin
+
+    - name: Build and push images
+      run: |
+        docker compose build
+        docker compose push
