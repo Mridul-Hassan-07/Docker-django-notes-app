@@ -1,0 +1,28 @@
+name: django-notes-app-ci-cd
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and start application
+        run: docker compose up -d --build
+
+      - name: Wait for application
+        run: sleep 15
+
+      - name: Test application
+        run: |
+          curl --fail http://localhost:8080
+
+      - name: Stop application
+        if: always()
+        run: docker compose down -v
+
