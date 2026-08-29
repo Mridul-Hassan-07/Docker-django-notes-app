@@ -1,5 +1,4 @@
 name: django-notes-app-ci-cd
-
 on:
   push:
     branches:
@@ -8,11 +7,14 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    environment: Docker-hub-login-credentials
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Build and start application
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         run: docker compose up -d --build
 
       - name: Wait for application
@@ -28,6 +30,7 @@ jobs:
   cd:
     needs: ci
     runs-on: ubuntu-latest
+    environment: Docker-hub-login-credentials
     
     steps:
     - name: Checkout repository
@@ -41,6 +44,8 @@ jobs:
         --password-stdin
 
     - name: Build and push images
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       run: |
         docker compose build
         docker compose push
