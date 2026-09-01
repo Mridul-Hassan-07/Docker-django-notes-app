@@ -9,6 +9,8 @@ jobs:
   ci:
     name: Build Docker Images
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
     steps:
 
@@ -31,6 +33,8 @@ jobs:
     name: Push Images to Docker Hub
     needs: ci
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
     steps:
      - name: Checkout repository
