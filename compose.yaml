@@ -1,6 +1,8 @@
 services:
   nginx:
     image: ${DOCKERHUB_USERNAME}/django-nginx
+    build:
+      context: ./nginx
     ports:
     - "8080:80"
     restart: always
@@ -11,6 +13,8 @@ services:
 
   django_app:
     image: ${DOCKERHUB_USERNAME}/docker-django-notes-app-django_app
+    build:
+      context: .
     networks:
     - three_tier
     container_name: "django_cont"
