@@ -60,10 +60,17 @@ jobs:
     environment: AWS_CREDENTIALS
 
     steps:
-     - name: Test EC2 port 22
-       run: |
-         echo "Testing SSH connectivity to EC2..."
-         nc -vz -w 10 "${{ secrets.EC_HOST }}" 22
+     - name: Checkout repository
+       uses: actions/checkout@v4
+
+     - name: Copy deployment file to EC2
+       uses: appleboy/scp-action@v1
+       with:
+         host: ${{ secrets.EC_HOST }}
+         username: ubuntu
+         key: ${{ secrets.EC_SSH_KEY }}
+         source: "compose.yaml"
+         target: "/home/ubuntu/Docker-django-notes-app/"
 
      - name: Deploy application to EC2
        uses: appleboy/ssh-action@v1
