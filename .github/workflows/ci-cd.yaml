@@ -73,6 +73,8 @@ jobs:
          key: ${{ secrets.EC_SSH_KEY }}
 
          script: |
+           set -e
+           export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
            cd ~/Docker-django-notes-app
            docker compose pull
            docker compose up -d
