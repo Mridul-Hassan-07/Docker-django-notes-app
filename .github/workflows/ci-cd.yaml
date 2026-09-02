@@ -65,7 +65,7 @@ jobs:
        with:
          host: ${{ secrets.EC_HOST }}
          username: ubuntu
-         key: ${{ secrets.EC2_SSH_KEY }}
+         key: ${{ secrets.EC_SSH_KEY }}
 
          script: |
            cd ~/Docker-django-notes-app
