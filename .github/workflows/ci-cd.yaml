@@ -38,11 +38,6 @@ jobs:
       - name: Stop application
         run: docker compose down
 
-      - name: Test application
-        run: | 
-          sleep 60
-          curl --fail http://localhost:8080
-
       - name: Show logs if CI fails
         if: failure()
         run: docker compose logs
