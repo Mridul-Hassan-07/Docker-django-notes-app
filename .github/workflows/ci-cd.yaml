@@ -12,6 +12,14 @@ jobs:
     environment: Docker-hub-login-credentials
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSOWRD }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
 
     steps:
 
@@ -29,6 +37,19 @@ jobs:
 
       - name: Stop application
         run: docker compose down
+
+      - name: Test application
+        run: | 
+          sleep 10
+          curl --fail http://localhost8080
+
+      - name: Show logs if CI fails
+        if: failure()
+        run: docker compose logs
+
+      - name: Stop application
+        if: always()
+        run: docker compose down -v
 
   push:
     name: Push Images to Docker Hub
