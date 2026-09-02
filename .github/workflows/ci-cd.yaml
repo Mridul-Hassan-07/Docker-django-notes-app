@@ -9,6 +9,7 @@ jobs:
   ci:
     name: Build Docker Images
     runs-on: ubuntu-latest
+    environment: Docker-hub-login-credentials
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
@@ -33,6 +34,7 @@ jobs:
     name: Push Images to Docker Hub
     needs: ci
     runs-on: ubuntu-latest
+    environment: Docker-hub-login-credentials
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
@@ -55,6 +57,7 @@ jobs:
     name: Deploy to AWS EC2
     needs: push
     runs-on: ubuntu-latest
+    environment: AWS_CREDENTIALS
 
     steps:
      - name: Deploy application to EC2
