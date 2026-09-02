@@ -41,7 +41,7 @@ jobs:
       - name: Test application
         run: | 
           sleep 10
-          curl --fail http://localhost8080
+          curl --fail http://localhost:8080
 
       - name: Show logs if CI fails
         if: failure()
