@@ -1,0 +1,139 @@
+name: CI/CD - on the ec2 k8s server
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  ci:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    environment: Docker-hub-login-credentials
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker images
+        run: docker compose build
+
+      - name: Start application
+        run: docker compose up -d
+
+      - name: check running containers
+        run: docker compose ps
+
+      - name: Stop application
+        run: docker compose down
+
+      - name: Show logs if CI fails
+        if: failure()
+        run: docker compose logs
+
+      - name: Stop application
+        if: always()
+        run: docker compose down -v
+
+  push:
+    name: Push Images to Docker Hub
+    needs: ci
+    runs-on: ubuntu-latest
+    environment: Docker-hub-login-credentials
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
+    steps:
+     - name: Checkout repository
+       uses: actions/checkout@v4
+
+     - name: Login to dockerhub
+       uses: docker/login-action@v3
+       with:
+         username: ${{ secrets.DOCKERHUB_USERNAME }}
+         password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+     - name: Build Docker images
+       run: docker compose build
+     - name: Push Docker images
+       run: docker compose push
+  
+  cd-kubernetes:
+    name: Deploy to kubernetes EC2
+    needs: push
+    runs-on: ubuntu-latest
+    environment: k8s-server-credentials
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy kubernetes manifests to EC2
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.K8S_SERVER }}
+          username: ubuntu
+          key: ${{ secrets.K8S_SERVER_KEY }}
+          source: "k8s"
+          target: "/home/ubuntu/"
+
+      - name: Deploy application to kubernetes
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.K8S_SERVER }}
+          username: ubuntu
+          key: ${{ secrets.K8S_SERVER_KEY }}
+          script: |
+            set -e
+            
+            NAMESPACE="notes-app"
+            DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
+
+            DJANGO_IMAGE="$DOCKERHUB_USERNAME/docker-django-notes-app-django_app:latest"
+            NGINX_IMAGE="$DOCKERHUB_USERNAME/django-nginx:latest"
+
+            cd /home/ubuntu/
+            
+            echo "Checking Kubernetes connection...."
+            kubectl get nodes
+            
+            echo "Applying kubernetes manifests..."
+            kubectl apply -f k8s --prune
+
+            echo "Updating Django image...."
+            kubectl set image deployment/django \
+            django="$DJANGO_IMAGE" \
+            --namespace="$NAMESPACE"
+            
+            echo "Updating Nginx image..."
+            kubectl set image deployment/nginx-deploy \
+            nginx="$NGINX_IMAGE" \
+            --namespace="$NAMESPACE"
+            
+            echo "Waiting for Django rollout..."
+            kubectl rollout status deployment/django \
+            --namespace="$NAMESPACE" \
+            --timeout=180s
+
+            echo "Waiting for Nginx rollout...."
+            kubectl rollout status deployment/nginx-deploy \
+            --namespace="$NAMESPACE" \
+            --timeout=180s
+
+            echo "Kubernetes deployment completed successfully."
+
+            kubectl get pods --namespace="$NAMESPACE"
+            kubectl get services --namespace="$NAMESPACE"
+
+

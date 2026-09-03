@@ -17,6 +17,7 @@ spec:
       containers:
       - name: django
         image: mridul1265/docker-django-notes-app-django_app
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
 
