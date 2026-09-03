@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django
+  namespace: notes-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: django-app
+  template:
+    metadata:
+      name: django
+      labels:
+        type: django-app
+    spec:
+      containers:
+      - name: django
+        image: mridul1265/docker-django-notes-app-django_app
+        ports:
+        - containerPort: 8000
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        
+        envFrom:
+        - secretRef:
+            name: django-app-secret
+
+        env:
+        - name: DB_HOST
+          value: db-svc
+        
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 5
+

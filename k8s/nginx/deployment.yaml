@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  namespace: notes-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: nginx
+  template:
+    metadata:
+      labels:
+        type: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: mridul1265/django-nginx
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf 
+
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+
