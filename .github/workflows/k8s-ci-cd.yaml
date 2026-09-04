@@ -107,6 +107,9 @@ jobs:
             
             echo "Checking Kubernetes connection...."
             kubectl get nodes
+
+            echo "Applying kubernetes namespace..."
+            kubectl apply -f k8s/namespace.yaml 
             
             echo "Applying kubernetes manifests..."
             kubectl apply -f k8s/ -R --prune -l app=notes-app
