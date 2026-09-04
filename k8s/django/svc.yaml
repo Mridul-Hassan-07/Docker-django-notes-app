@@ -9,3 +9,4 @@ spec:
     targetPort: 8000
   selector:
     type: django-app
+    app: notes-app

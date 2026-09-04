@@ -1,14 +1,4 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  creationTimestamp: "2026-09-03T09:23:50Z"
-  labels:
-    kubernetes.io/metadata.name: notes-app
   name: notes-app
-  resourceVersion: "6278"
-  uid: c1c24623-72a5-4660-82b4-cb167dfb6b27
-spec:
-  finalizers:
-  - kubernetes
-status:
-  phase: Active

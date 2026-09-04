@@ -8,10 +8,12 @@ spec:
   selector:
     matchLabels:
       type: nginx
+      app: notes-app
   template:
     metadata:
       labels:
         type: nginx
+        app: notes-app
     spec:
       containers:
       - name: nginx
