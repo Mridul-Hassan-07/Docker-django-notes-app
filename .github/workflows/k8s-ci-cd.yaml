@@ -113,7 +113,16 @@ jobs:
             kubectl apply -f k8s/namespace.yaml 
             
             echo "Applying kubernetes manifests..."
-            kubectl apply -f k8s/ -R
+            kubectl apply -f k8s/ \
+            -R \
+            --prune \
+            -l app=notes-app \
+            --prune-allowlist=apps/v1/Deployment \
+            --prune-allowlist=apps/v1/StatefulSet \
+            --prune-allowlist=v1/Service \
+            --prune-allowlist=v1/ConfigMap \
+            --prune-allowlist=v1/Secret \
+            --prune-allowlist=networking.k8s.io/v1/Ingress
 
             echo "Updating Django image...."
             kubectl set image deployment/django \
