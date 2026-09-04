@@ -74,17 +74,6 @@ jobs:
     needs: push
     runs-on: ubuntu-latest
     environment: AWS_CREDENTIALS
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_PORT: ${{ secrets.DB_PORT }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-
-      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-
 
     steps:
      - name: Checkout repository
@@ -109,6 +98,15 @@ jobs:
          script: |
            set -e
            export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
+           export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
+           export DB_NAME="${{ secrets.DB_NAME }}"
+           export DB_USER="${{ secrets.DB_USER }}"
+           export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+           export DB_PORT="${{ secrets.DB_PORT }}"
+           export DB_HOST="${{ secrets.DB_HOST }}"
+           export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
+           export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
+
            cd ~/Docker-django-notes-app
            docker compose pull
            docker compose up -d
