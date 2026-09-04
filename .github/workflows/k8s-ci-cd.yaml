@@ -113,7 +113,7 @@ jobs:
             kubectl apply -f k8s/namespace.yaml 
             
             echo "Applying kubernetes manifests..."
-            kubectl apply -f k8s\ -R
+            kubectl apply -f k8s/ -R
 
             echo "Updating Django image...."
             kubectl set image deployment/django \
