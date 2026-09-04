@@ -98,7 +98,6 @@ jobs:
          script: |
            set -e
            export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
-           export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
            export DB_NAME="${{ secrets.DB_NAME }}"
            export DB_USER="${{ secrets.DB_USER }}"
            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
@@ -109,6 +108,6 @@ jobs:
 
            cd ~/Docker-django-notes-app
            docker compose pull
-           docker compose up -d
+           docker compose up -d --remove-orphans
            docker image prune -f
            docker compose ps
