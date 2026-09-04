@@ -85,8 +85,9 @@ jobs:
           host: ${{ secrets.K8S_SERVER }}
           username: ubuntu
           key: ${{ secrets.K8S_SERVER_KEY }}
-          source: "k8s"
-          target: "/home/ubuntu/"
+          source: "k8s/*"
+          target: "/home/ubuntu/k8s/"
+          strip_components: 1
 
       - name: Deploy application to kubernetes
         uses: appleboy/ssh-action@v1
